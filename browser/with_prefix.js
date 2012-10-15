@@ -20,14 +20,15 @@ module.exports = function withPrefix (prefix, elem) {
         });
         return wrap(querySelector.call(this, s));
     };
-    
-    var querySelectorAll = elem.constructor.prototype.querySelectorAll;
-    elem.querySelectorAll = function (sel) {
-        var s = sel.replace(/([.#])([^.\s])/g, function (_, op, c) {
-            return op + prefix + c;
-        });
-        return wrap(querySelectorAll.call(this, s));
-    };
+    if (!/MSIE 8.0/.test(navigator.userAgent)) {
+        var querySelectorAll = elem.constructor.prototype.querySelectorAll;
+        elem.querySelectorAll = function (sel) {
+            var s = sel.replace(/([.#])([^.\s])/g, function (_, op, c) {
+                return op + prefix + c;
+            });
+            return wrap(querySelectorAll.call(this, s));
+        };
+    }
     
     elem.addClass = function (c) {
         var ps = elem.className.split(/\s+/);
