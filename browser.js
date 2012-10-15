@@ -30,8 +30,14 @@ module.exports = function (prefix, files) {
             }
         }
         
-        var cssText = document.createTextNode(sources.join('\n'));
-        cssElement.appendChild(cssText);
+        cssElement.setAttribute("type", "text/css");
+        var text = sources.join('\n');
+        if (cssElement.styleSheet) {
+            cssElement.styleSheet.cssText = text;
+        } else {
+            var cssText = document.createTextNode(text);
+            cssElement.appendChild(cssText);
+        }
     })();
     
     var insertedCss = false;
