@@ -7,13 +7,13 @@ module.exports = function withPrefix (prefix, elem) {
             }
         }
         if (e._prefix === prefix) return e;
-        
+
         return withPrefix(prefix, e);
     }
-    
+
     elem._prefix = prefix;
-    
-    var querySelector = elem.constructor.prototype.querySelector;
+
+    /*var querySelector = elem.constructor.prototype.querySelector;
     elem.querySelector = function (sel) {
         var s = sel.replace(/([.#])([^.\s])/g, function (_, op, c) {
             return op + prefix + c;
@@ -28,16 +28,25 @@ module.exports = function withPrefix (prefix, elem) {
             });
             return wrap(querySelectorAll.call(this, s));
         };
-    }
-    
+    }*/
+
     elem.addClass = function (c) {
-        var ps = elem.className.split(/\s+/);
+        var cn = elem.className || elem['class'] ||
+          elem.getAttribute('class') ||
+          elem.getAttribute('className');
+        var ps = cn.split(/\s+/);
         if (ps.indexOf(prefix + c) < 0) {
             ps.push(prefix + c);
             elem.className = ps.join(' ');
+            elem['class'] = ps.join(' ');
+            elem.setAttribute('className', ps.join(' ')) ||
+                elem.setAttribute('class', ps.join(' '));
+            cn = elem.className || elem['class'] ||
+              elem.getAttribute('class') ||
+              elem.getAttribute('className');
         }
     };
-    
+
     elem.removeClass = function (c) {
         var ps = elem.className.split(/\s+/);
         var ix = ps.indexOf(prefix + c);
@@ -46,12 +55,12 @@ module.exports = function withPrefix (prefix, elem) {
             elem.className = ps.join(' ');
         }
     };
-    
+
     elem.hasClass = function (c) {
         var ps = elem.className.split(/\s+/);
         var ix = ps.indexOf(prefix + c) >= 0;
         return ix >= 0;
     };
-    
+
     return elem;
 };
